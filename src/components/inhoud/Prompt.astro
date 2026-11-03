@@ -1,0 +1,638 @@
+---
+// A prompt for the student to copy into their AI tool (docs/BRIEFING.md
+// § 12, "Prompts en gesprekken"):
+//
+//   <Prompt>
+//   Ik zit in het [jaar en richting]. Op [datum] heb ik een schriftelijke
+//   toets [vak] over [onderwerp]. Stel me vijf vragen, één per keer.
+//   </Prompt>
+//
+// Between the tags go plain paragraphs; a blank line starts a new one. A
+// placeholder between [ and ] gets a quiet mark of its own, so the student
+// sees what to fill in; the brackets stay, also on the clipboard.
+//
+// "Kopieer" copies the prompt as plain text. The build derives that text
+// from the paragraphs (readPrompt in authoring.ts) and puts it in
+// `data-prompt-text`; the script copies that attribute and never the text of
+// the block, so the label, the button and the confirmation cannot end up on
+// the clipboard. Without JavaScript the block stands there without the
+// button. Authors write no import.
+//
+// With fields, the student writes part of the prompt on the step itself:
+//
+//   <Prompt id="uitleg-begrip" velden={{ begrip: 'Begrip', 'mijn uitleg': 'Mijn uitleg' }}>
+//   Mijn uitleg van [begrip]: [mijn uitleg] Klopt mijn uitleg? …
+//   </Prompt>
+//
+// `velden` maps the name of a placeholder to the label of its field; other
+// placeholders stay placeholders for the tool. The fields stand above the
+// block, and on every keystroke their placeholders show what the student
+// wrote. "Kopieer" copies the build's text with the fields filled in
+// (`data-prompt-template`); an empty field stays [begrip]. What the student
+// writes is stored under `id`, like the answer to a question, and comes back
+// in the summary under the title of the step: the container of the fields is
+// the question there (`data-question="prompt-fields"`). Without JavaScript
+// the fields are hidden and the prompt stands there with its placeholders.
+// A prompt without `velden` renders exactly as before, byte for byte: that
+// is why the parts that only exist with fields are glued to the next tag in
+// the template (`)}<div`, `}<p`), where a line break would add a space.
+import { checkQuestionId } from '../vragen/authoring';
+import { checkPromptFields, readPrompt, type PromptField } from './authoring';
+
+interface Props {
+  // Only with `velden`: the key under which the fields are stored.
+  id?: string;
+  // Placeholder name → the label of its field.
+  velden?: Record<string, string>;
+}
+
+const rendered = Astro.slots.has('default') ? await Astro.slots.render('default') : '';
+
+let id: string | null = null;
+let fields: PromptField[] | null = null;
+// The title of the step, which the summary shows above the fields.
+let question = '';
+if (Astro.props.velden !== undefined) {
+  fields = checkPromptFields(Astro.props.velden);
+  if (Astro.props.id === undefined) {
+    throw new Error(
+      '<Prompt> with `velden` needs an `id`, such as <Prompt id="uitleg-begrip" velden={…}>. What the student ' +
+        'writes in the fields is stored under it, as the answer to a question.',
+    );
+  }
+  id = checkQuestionId('Prompt', Astro.props.id, Astro.locals);
+  // Read from the MDX source by the module route (checks.ts): a component
+  // cannot read the title of the step it renders in.
+  const steps = (Astro.locals as { promptSteps?: Readonly<Record<string, string>> }).promptSteps;
+  const title = steps !== undefined && Object.hasOwn(steps, id) ? steps[id] : undefined;
+  if (title === undefined) {
+    throw new Error(`<Prompt id="${id}"> with \`velden\` only works in a <Stap> of a module (src/content/modules/).`);
+  }
+  question = title;
+} else if (Astro.props.id !== undefined) {
+  throw new Error(
+    `<Prompt id=${JSON.stringify(Astro.props.id)}> has an \`id\` but no \`velden\`. Only a prompt with fields ` +
+      'stores something: add `velden`, or remove the `id`.',
+  );
+}
+
+const { html, text, template } = readPrompt(rendered, id === null || fields === null ? null : { id, fields });
+const baseId = `vraag-${id ?? ''}`;
+const noteId = fields === null ? undefined : `${baseId}-leeg`;
+---
+
+{fields !== null && (
+  <div
+    class="prompt-fields"
+    data-question="prompt-fields"
+    data-question-id={id}
+    data-question-text={question}
+    data-prompt-fields={JSON.stringify(fields.map((field) => [field.name, field.label]))}
+  >
+    {fields.map((field, index) => (
+      <div class="prompt-field">
+        <label class="prompt-field-label" for={`${baseId}-veld-${index + 1}`}>{field.label}</label>
+        <textarea
+          class="prompt-field-input"
+          id={`${baseId}-veld-${index + 1}`}
+          rows="1"
+          data-prompt-field={field.name}
+          aria-controls={`${baseId}-prompt`}
+        ></textarea>
+      </div>
+    ))}
+  </div>
+)}<div class="prompt" data-prompt data-prompt-text={text} data-prompt-template={template === null ? undefined : JSON.stringify(template)}>
+  <p class="prompt-label">Prompt</p>
+  <div class="prompt-text" data-prompt-body id={fields === null ? undefined : `${baseId}-prompt`}><Fragment set:html={html} /></div>
+  <div class="prompt-actions">
+    {/* Always in the page, also when empty, so that a screen reader reads
+        the confirmation when it appears. With fields, the note before it
+        says which fields are still empty. */}
+    {fields !== null && <p class="prompt-note" id={noteId} data-prompt-note></p>}<p class="prompt-status" role="status" data-prompt-status>
+      <svg class="prompt-icon prompt-check" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 12.5l4.5 4.5L19 7.5"></path>
+      </svg>
+      <span data-prompt-message></span>
+    </p>
+    <button type="button" class="prompt-copy" data-prompt-copy aria-describedby={noteId}>
+      <svg class="prompt-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+        <path d="M5 15V6a2 2 0 0 1 2-2h9"></path>
+      </svg>
+      Kopieer<span class="sr-only"> de prompt</span>
+    </button>
+  </div>
+</div>
+
+<style>
+  /* Something the student copies into the AI tool: the prompt style on the
+     AI colours (docs/DESIGN.md). Only design-system tokens. Single classes,
+     so they win over the zero-specificity step defaults in Stap.astro.
+
+     Height budget on 1366 × 640 (docs/BRIEFING.md § 12): the row with the
+     label and the button, then 24px per line of text. As wide as a line of
+     running text (65ch of the body font), like the paragraphs around it. */
+  .prompt {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'label actions'
+      'text text';
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    max-width: 65ch;
+    margin: 0 0 var(--space-4);
+    padding: var(--space-2) var(--space-4) var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--ai-soft);
+    color: var(--ai-text);
+  }
+
+  /* The last thing in a step, also when the script of this component follows
+     it in the page: no space below it (as Stap.astro does for :last-child). */
+  .prompt:not(:has(~ :not(script, style))) {
+    margin-bottom: 0;
+  }
+
+  .prompt-label {
+    grid-area: label;
+    max-width: none;
+    margin: 0;
+    font-size: var(--text-label-size);
+    line-height: var(--text-label-line);
+    font-weight: var(--text-label-weight);
+    letter-spacing: var(--text-label-tracking);
+    text-transform: uppercase;
+  }
+
+  .prompt-text {
+    grid-area: text;
+    font-family: var(--font-mono);
+    font-size: var(--text-prompt-size);
+    line-height: var(--text-prompt-line);
+    font-weight: var(--text-prompt-weight);
+    letter-spacing: var(--text-prompt-tracking);
+    overflow-wrap: anywhere;
+  }
+
+  .prompt-text > :global(p) {
+    max-width: none;
+    margin: 0 0 var(--space-3);
+  }
+
+  .prompt-text > :global(:last-child) {
+    margin-bottom: 0;
+  }
+
+  .prompt-text :global(code) {
+    font: inherit;
+  }
+
+  /* What the student fills in: a quiet white mark, brackets included, so the
+     student finds it again in the tool after pasting. */
+  .prompt-text :global(.prompt-slot) {
+    padding: 0 var(--space-1);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /* What the student wrote in a field, without brackets. Green is the
+     student (docs/DESIGN.md): `brand-text` on the ground of an answer field,
+     `surface-sunken` (4.8:1), underlined in `brand`. The student's line
+     breaks stay, as on the clipboard. */
+  .prompt-text :global(.prompt-slot[data-filled]) {
+    background: var(--surface-sunken);
+    box-shadow: inset 0 -2px 0 var(--brand);
+    color: var(--brand-text);
+    white-space: pre-line;
+  }
+
+  /* The fields of a prompt with `velden`, above the block: side by side,
+     wrapping when they do not fit, each with its label above it. They only
+     work with JavaScript; without it the prompt keeps its placeholders. */
+  .prompt-fields {
+    display: none;
+  }
+
+  :global(.js) .prompt-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    max-width: 65ch;
+    margin: 0 0 var(--space-3);
+  }
+
+  .prompt-field {
+    display: flex;
+    flex: 1 1 12rem;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+
+  /* Green is the student. */
+  .prompt-field-label {
+    color: var(--brand-text);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-line);
+    font-weight: var(--text-label-weight);
+    letter-spacing: var(--text-small-tracking);
+  }
+
+  /* One line that grows to three (the script sets the height), then
+     scrolls. */
+  .prompt-field-input {
+    display: block;
+    width: 100%;
+    max-width: none;
+    max-height: calc(3 * var(--text-body-line) + 2 * var(--space-2) + 2px);
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    overflow-y: auto;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface-sunken);
+    color: var(--ink);
+    font: inherit;
+    resize: none;
+  }
+
+  /* The button only works with JavaScript. It never moves: a long status
+     wraps within its own box, to the left of the button. */
+  .prompt-actions {
+    display: none;
+  }
+
+  :global(.js) .prompt-actions {
+    display: flex;
+    grid-area: actions;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: var(--space-2);
+  }
+
+  .prompt-copy {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--ai);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ai-text);
+    font: inherit;
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-line);
+    font-weight: var(--text-label-weight);
+    letter-spacing: var(--text-small-tracking);
+    cursor: pointer;
+  }
+
+  .prompt-copy:hover {
+    background: var(--ai);
+    color: var(--on-ai);
+  }
+
+  /* Hover only (docs/DESIGN.md, "Beweging"). The status and the note fade in
+     with `appear` from src/lib/motion.ts when the script shows them. */
+  @media (prefers-reduced-motion: no-preference) {
+    .prompt-copy {
+      transition:
+        background-color var(--motion-fast) var(--ease-out),
+        color var(--motion-fast) var(--ease-out);
+    }
+  }
+
+  /* Which fields are still empty, left of the button. It gives way to the
+     status while that shows. */
+  .prompt-note {
+    align-self: center;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-line);
+    font-weight: var(--text-small-weight);
+    letter-spacing: var(--text-small-tracking);
+    text-align: right;
+  }
+
+  .prompt-note:empty,
+  .prompt[data-state] .prompt-note {
+    display: none;
+  }
+
+  /* Empty and without room until the student copies; set by the script. */
+  .prompt-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-line);
+    font-weight: var(--text-label-weight);
+    letter-spacing: var(--text-small-tracking);
+  }
+
+  .prompt[data-state] .prompt-status {
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .prompt[data-state='copied'] .prompt-status {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+
+  /* A sentence, not a word: regular weight, so it stays short. */
+  .prompt[data-state='fallback'] .prompt-status {
+    background: var(--warning-soft);
+    color: var(--warning);
+    font-weight: var(--text-small-weight);
+  }
+
+  .prompt-check {
+    display: none;
+  }
+
+  .prompt[data-state='copied'] .prompt-check {
+    display: block;
+  }
+
+  .prompt-icon {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>
+
+<script>
+  // Copying a <Prompt>: one script for every prompt on the page, listening on
+  // the document. Only a prompt with fields stores something: what the
+  // student writes in its fields (see "Prompts with fields" below).
+  import { appear } from '../../lib/motion';
+  import { moduleIdOf } from '../stappen/storage';
+  import { readAnswer, writeAnswer } from '../vragen/answers';
+
+  const MESSAGES = {
+    copied: 'Gekopieerd',
+    fallback: 'Kopiëren lukte niet vanzelf. De prompt is geselecteerd: druk op Ctrl+C.',
+  } as const;
+  type State = keyof typeof MESSAGES;
+
+  // How long "Gekopieerd" stays.
+  const CONFIRMATION_MS = 4000;
+
+  // The one prompt that shows a status, and the timer that ends it: copying
+  // another prompt ends it at once.
+  let current: HTMLElement | null = null;
+  let timer: number | undefined;
+
+  // Left of the button, the note on the empty fields shows while it has text
+  // and no status takes its place (the styles hide it otherwise).
+  function noteShows(block: HTMLElement): boolean {
+    const note = block.querySelector('[data-prompt-note]');
+    return note !== null && note.textContent !== '' && block.dataset.state === undefined;
+  }
+
+  // What comes into view left of the button fades in (docs/DESIGN.md,
+  // "Beweging"): a new status, or the note it made way for. Always after
+  // something the student did: a copy, a selection, typing, or the end of a
+  // confirmation.
+  function render(block: HTMLElement, state: State | null): void {
+    const before = block.dataset.state;
+    const noted = noteShows(block);
+    if (state === null) block.removeAttribute('data-state');
+    else block.dataset.state = state;
+    const message = block.querySelector('[data-prompt-message]');
+    if (message !== null) message.textContent = state === null ? '' : MESSAGES[state];
+    const status = block.querySelector<HTMLElement>('[data-prompt-status]');
+    if (state !== null && state !== before && status !== null) appear(status);
+    const note = block.querySelector<HTMLElement>('[data-prompt-note]');
+    if (!noted && note !== null && noteShows(block)) appear(note);
+  }
+
+  function show(block: HTMLElement, state: State | null): void {
+    window.clearTimeout(timer);
+    if (current !== null && current !== block) render(current, null);
+    current = state === null ? null : block;
+    render(block, state);
+    // The request to press Ctrl+C stays until the student copies.
+    if (state === 'copied') timer = window.setTimeout(() => show(block, null), CONFIRMATION_MS);
+  }
+
+  // The text that "Kopieer" puts on the clipboard: the build's plain text,
+  // never the text of the block with its label and button. With fields, the
+  // build's text with what the student wrote in place of their placeholders.
+  function textOf(block: HTMLElement): string {
+    const fields = fieldsOfBlock.get(block);
+    if (fields === undefined) return block.dataset.promptText ?? '';
+    const values = valuesOf(fields);
+    return fields.template
+      .map((part) => (typeof part === 'string' ? part : values.get(part.field) || part.empty))
+      .join('');
+  }
+
+  function select(block: HTMLElement): void {
+    const body = block.querySelector('[data-prompt-body]');
+    const selection = window.getSelection();
+    if (body === null || selection === null) return;
+    const range = document.createRange();
+    range.selectNodeContents(body);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  // The prompt whose text is selected as a whole, if any. The browser puts
+  // line breaks of its own between the paragraphs of a selection, so the
+  // comparison ignores white space.
+  function selectedPrompt(): HTMLElement | null {
+    const selection = window.getSelection();
+    if (selection === null || selection.rangeCount !== 1) return null;
+    const node = selection.getRangeAt(0).commonAncestorContainer;
+    const element = node instanceof Element ? node : node.parentElement;
+    const block = element?.closest('[data-prompt-body]')?.closest<HTMLElement>('[data-prompt]') ?? null;
+    if (block === null) return null;
+    const squash = (text: string): string => text.replace(/\s+/g, '');
+    return squash(selection.toString()) === squash(textOf(block)) ? block : null;
+  }
+
+  async function copy(block: HTMLElement): Promise<void> {
+    try {
+      // Throws when there is no Clipboard API (not a secure context) and
+      // rejects when the browser refuses.
+      await navigator.clipboard.writeText(textOf(block));
+      show(block, 'copied');
+    } catch {
+      select(block);
+      show(block, 'fallback');
+    }
+  }
+
+  document.addEventListener('click', (event) => {
+    const button = event.target instanceof Element ? event.target.closest('[data-prompt-copy]') : null;
+    const block = button?.closest<HTMLElement>('[data-prompt]');
+    if (block != null) void copy(block);
+  });
+
+  // Ctrl+C on a prompt that is selected as a whole, after the fallback or
+  // because the student selected it: the same plain text as the button, and
+  // the same confirmation. A partial selection copies as the browser would.
+  document.addEventListener('copy', (event) => {
+    const block = selectedPrompt();
+    if (block === null || event.clipboardData === null) return;
+    event.clipboardData.setData('text/plain', textOf(block));
+    event.preventDefault();
+    show(block, 'copied');
+  });
+
+  // The student selected something else: the prompt is no longer selected,
+  // so the request to press Ctrl+C goes.
+  document.addEventListener('selectionchange', () => {
+    if (current?.dataset.state === 'fallback' && selectedPrompt() !== current) show(current, null);
+  });
+
+  // --- Prompts with fields ---------------------------------------------------
+  //
+  // The container of the fields stands right before its prompt block; both
+  // are rendered by Prompt.astro, so nothing comes between them. On every
+  // keystroke the placeholders of a field show what the student wrote, the
+  // note next to "Kopieer" says which fields are still empty, and the values
+  // are stored under `vraag:<id>` (../vragen/answers.ts), where the summary
+  // reads them. They come back after a reload; "Opnieuw beginnen" clears
+  // them with the rest of the module.
+
+  // The build's copied text, cut at the placeholders of the fields
+  // (PromptPart in authoring.ts).
+  type Part = string | { readonly field: string; readonly empty: string };
+
+  interface Fields {
+    // The container of the fields: the question for the summary.
+    readonly root: HTMLElement;
+    readonly block: HTMLElement;
+    readonly inputs: readonly HTMLTextAreaElement[];
+    // Placeholder name → label, in the order of `velden`.
+    readonly labels: ReadonlyMap<string, string>;
+    readonly template: readonly Part[];
+  }
+
+  const fieldsOfBlock = new WeakMap<HTMLElement, Fields>();
+
+  // What a placeholder shows while its field is empty: its text as the
+  // author wrote it, brackets included.
+  const emptyText = new WeakMap<HTMLElement, string>();
+
+  // What the student wrote, per placeholder name. Leading and trailing white
+  // space goes; '' is empty.
+  function valuesOf(fields: Fields): Map<string, string> {
+    return new Map(fields.inputs.map((input) => [input.dataset.promptField ?? '', input.value.trim()]));
+  }
+
+  // The placeholders of the fields, and the note on the fields still empty.
+  // A note that comes back because the student emptied a field fades in;
+  // not at load (`fromStudent` false).
+  function fill(fields: Fields, fromStudent: boolean): void {
+    const noted = noteShows(fields.block);
+    const values = valuesOf(fields);
+    for (const slot of fields.block.querySelectorAll<HTMLElement>('[data-prompt-slot]')) {
+      const value = values.get(slot.dataset.promptSlot ?? '') ?? '';
+      const text = value === '' ? (emptyText.get(slot) ?? '') : value;
+      if (slot.textContent !== text) slot.textContent = text;
+      slot.toggleAttribute('data-filled', value !== '');
+    }
+    const empty = Array.from(fields.labels).flatMap(([name, label]) => (values.get(name) ? [] : [label]));
+    const note = fields.block.querySelector<HTMLElement>('[data-prompt-note]');
+    const text = empty.length === 0 ? '' : `Nog leeg: ${empty.join(', ')}`;
+    if (note !== null && note.textContent !== text) note.textContent = text;
+    if (fromStudent && !noted && note !== null && noteShows(fields.block)) appear(note);
+  }
+
+  function save(fields: Fields): void {
+    const moduleId = moduleIdOf(fields.root);
+    const id = fields.root.dataset.questionId;
+    if (moduleId === null || id === undefined) return;
+    writeAnswer(moduleId, id, {
+      kind: 'prompt-fields',
+      question: fields.root.dataset.questionText ?? '',
+      fields: Object.fromEntries(fields.inputs.map((input) => [input.dataset.promptField ?? '', input.value])),
+    });
+  }
+
+  // One line that grows to three, then scrolls: the CSS caps the height. A
+  // field in a hidden step has no width yet; the observer below fits it when
+  // its step is shown, and again when the window changes width.
+  const fittedWidth = new WeakMap<HTMLTextAreaElement, number>();
+
+  function fit(input: HTMLTextAreaElement): void {
+    const width = input.clientWidth;
+    if (width === 0) return;
+    fittedWidth.set(input, width);
+    input.style.height = 'auto';
+    const style = window.getComputedStyle(input);
+    const borders = Number.parseFloat(style.borderTopWidth) + Number.parseFloat(style.borderBottomWidth);
+    input.style.height = `${input.scrollHeight + borders}px`;
+  }
+
+  // Only on a change of width: fitting changes the height, and must not
+  // trigger itself.
+  const resizes = new ResizeObserver((entries) => {
+    for (const { target } of entries) {
+      if (target instanceof HTMLTextAreaElement && target.clientWidth !== fittedWidth.get(target)) fit(target);
+    }
+  });
+
+  function initFields(root: HTMLElement): void {
+    const block = root.nextElementSibling;
+    if (!(block instanceof HTMLElement) || !block.matches('[data-prompt][data-prompt-template]')) return;
+    const fields: Fields = {
+      root,
+      block,
+      inputs: Array.from(root.querySelectorAll<HTMLTextAreaElement>('textarea[data-prompt-field]')),
+      labels: new Map(JSON.parse(root.dataset.promptFields ?? '[]') as [string, string][]),
+      template: JSON.parse(block.dataset.promptTemplate ?? '[]') as Part[],
+    };
+    fieldsOfBlock.set(block, fields);
+    for (const slot of block.querySelectorAll<HTMLElement>('[data-prompt-slot]')) {
+      emptyText.set(slot, slot.textContent ?? '');
+    }
+
+    const moduleId = moduleIdOf(root);
+    const id = root.dataset.questionId;
+    const stored = moduleId === null || id === undefined ? null : readAnswer(moduleId, id);
+    if (stored?.kind === 'prompt-fields') {
+      for (const input of fields.inputs) {
+        const value = stored.fields[input.dataset.promptField ?? ''];
+        if (typeof value === 'string') input.value = value;
+      }
+    }
+    fill(fields, false);
+    for (const input of fields.inputs) {
+      fit(input);
+      resizes.observe(input);
+    }
+
+    // On the container, so that the values are stored before a listener on
+    // the document (the summary, when it is on the same step) reads them.
+    root.addEventListener('input', (event) => {
+      if (!(event.target instanceof HTMLTextAreaElement)) return;
+      fit(event.target);
+      fill(fields, true);
+      save(fields);
+      // What was copied is no longer what the prompt says.
+      if (current === block) show(block, null);
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-prompt-fields]').forEach(initFields);
+</script>

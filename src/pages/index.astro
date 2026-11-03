@@ -1,0 +1,51 @@
+---
+import '@fontsource-variable/figtree';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import '../styles/workshop.css';
+import logo from '../assets/logo/arcadia-logo.svg';
+import Prompt from '../components/inhoud/Prompt.astro';
+const groups = [
+ {title:'Intro', items:[['start','Welkom'],['definitie','Wat is vibecoding?'],['waarom','Waarom voor leerkrachten?'],['tools','Tools en privacy'],['vandaag','Wat doen we vandaag?'],['klein','Hou het klein']]},
+ {title:'Zelf aan de slag',items:[['behoefte','1. Behoefte'],['oplossing','2. Oplossing'],['bouwen','3. Bouwen'],['testen','4. Testen'],['itereren','5. Itereren']]},
+ {title:'Verder',items:[['bewaren','Bewaren en gebruiken'],['publiceren','Publiceren en delen'],['inspiratie','Inspiratie en uitbreidingen']]}
+];
+const items=groups.flatMap(g=>g.items);
+---
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Intro tot vibecoding · AI voor leerkrachten</title><meta name="description" content="Van een behoefte in je les naar een kleine, bruikbare toepassing."/><script is:inline>document.documentElement.classList.add('js');</script></head>
+<body>
+<a class="skip" href="#inhoud">Ga naar inhoud</a>
+<header><a href="#start"><img src={logo.src} height="28" alt="Arcadia scholen"/> <strong>AI voor leerkrachten</strong></a><span>Technische proef</span></header>
+<div class="shell"><aside><details open><summary>Leerpad · navigatie</summary><nav aria-label="Leerpad">{groups.map(g=><div class="group"><p class="eyebrow">{g.title}</p><ul>{g.items.map(([id,label])=><li><a href={`#${id}`} data-nav={id}>{label}</a></li>)}</ul></div>)}</nav></details></aside>
+<main id="inhoud" tabindex="-1">
+<nav class="cycle" aria-label="De vijf stappen">{groups[1].items.map(([id,label],i)=><><a href={`#${id}`} data-cycle={id}>{label}</a>{i<4&&<span aria-hidden="true">→</span>}</>)}</nav>
+{items.map(([id,label])=><section data-page={id} id={id} aria-labelledby={`title-${id}`}>
+{id==='start'?<><p class="eyebrow">Workshop · 90 minuten · secundair onderwijs</p><h1 id={`title-${id}`}>Intro tot vibecoding</h1><p class="lead">Van een behoefte in je les naar een kleine, bruikbare toepassing.</p><div class="panel"><h2>Bouwen met natuurlijke taal</h2><p>Je beschrijft wat je wilt maken. AI schrijft de code. Jij test of het werkt en stuurt bij.</p><p><strong>Jouw vakkennis en didactische keuzes geven richting.</strong> Je hoeft geen programmeur te zijn om te starten.</p></div><div class="notice"><strong>Eerste technische proef.</strong> De pagina ‘Behoefte’ is uitgewerkt. De andere onderdelen staan klaar in het menu en worden nog aangevuld.</div><a class="button" href="#behoefte">Probeer de eerste stap →</a></>
+:id==='behoefte'?<><p class="eyebrow">Stap 1 · Eerst de behoefte</p><h1 id={`title-${id}`}>Wat wil je verbeteren in je les?</h1><p class="lead">Vertrek vanuit iets waar jij of je leerlingen tegenaan lopen. Onderzoek daarna of een app daarbij kan helpen.</p><div class="columns"><div class="panel"><h2>Herken je dit?</h2><ul><li>Groepen samenstellen kost me veel tijd.</li><li>Ik moet telkens de volgende werkfase aankondigen.</li><li>Ik wil weten wat leerlingen meenemen uit mijn les.</li><li>Leerlingen zien losse gebeurtenissen, maar geen verbanden.</li><li>Het effect van een parameter op een grafiek blijft abstract.</li></ul></div><div class="panel"><h2>Maak het concreet</h2><ol><li>Waar lopen we regelmatig tegenaan?</li><li>Wat zou er beter gaan als dit opgelost was?</li><li>Kan een interactieve toepassing daarbij helpen?</li></ol><p>Een bestaande tool of een andere werkvorm kan ook passen.</p></div></div><details class="prompt-details"><summary>Prompt · Laat AI eerst meedenken</summary><p class="small">Begin een nieuw AI-gesprek en blijf daarin voor de volgende stappen. Gebruik fictieve leerlinggegevens.</p><Prompt><p>Ik geef [vak] aan [doelgroep]. Ik merk dat [concrete situatie]. Ik wil bereiken dat [gewenste verandering].</p><p>Stel me maximaal drie vragen om mijn behoefte scherper te krijgen. Stel nog geen app voor en schrijf nog geen code.</p></Prompt></details><div class="notice"><strong>Klaar?</strong> Je kunt zeggen: ‘Ik merk dat … en ik wil bereiken dat …’</div></>
+:<><p class="eyebrow">Intro tot vibecoding · in opbouw</p><h1 id={`title-${id}`}>{label}</h1><div class="panel"><h2>Deze stap vullen we nog aan</h2><p>Dit is een eerste technische proef van de vormgeving en navigatie. De inhoud van deze pagina volgt.</p></div><a href="#behoefte">Probeer de uitgewerkte pagina Behoefte →</a></>}
+</section>)}
+<footer class="pagination"><a data-prev href="#start">← Vorige</a><span data-position></span><a data-next href="#definitie">Volgende →</a></footer>
+</main></div>
+<script>
+const pages=Array.from(document.querySelectorAll<HTMLElement>('[data-page]'));
+const ids=pages.map(p=>p.id);
+function render(){
+ const hash=location.hash.slice(1); const id=ids.includes(hash)?hash:'start'; const i=ids.indexOf(id);
+ pages.forEach(p=>{p.hidden=p.id!==id});
+ document.querySelectorAll<HTMLAnchorElement>('[data-nav]').forEach(a=>{if(a.dataset.nav===id)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+ document.querySelectorAll<HTMLAnchorElement>('[data-cycle]').forEach(a=>{if(a.dataset.cycle===id)a.setAttribute('aria-current','step');else a.removeAttribute('aria-current')});
+ const cycle=document.querySelector<HTMLElement>('.cycle');if(cycle)cycle.hidden=!['behoefte','oplossing','bouwen','testen','itereren'].includes(id);
+ const prev=document.querySelector<HTMLAnchorElement>('[data-prev]');const next=document.querySelector<HTMLAnchorElement>('[data-next]');
+ if(prev){prev.hidden=i===0;prev.href='#'+ids[Math.max(0,i-1)]}if(next){next.hidden=i===ids.length-1;next.href='#'+ids[Math.min(ids.length-1,i+1)]}
+ const pos=document.querySelector('[data-position]');if(pos)pos.textContent=`${i+1} / ${ids.length}`;
+ document.title=(document.querySelector(`[data-nav="${id}"]`)?.textContent??'Intro tot vibecoding')+' · AI voor leerkrachten';
+ try{localStorage.setItem('vibecoding-voor-leerkrachten:last-step',id)}catch{}
+ window.scrollTo(0,0);
+}
+if(!location.hash){try{const last=localStorage.getItem('vibecoding-voor-leerkrachten:last-step');if(last&&ids.includes(last))history.replaceState(null,'','#'+last)}catch{}}
+render();window.addEventListener('hashchange',()=>{render();document.querySelector<HTMLElement>('[data-page]:not([hidden]) h1')?.setAttribute('tabindex','-1');document.querySelector<HTMLElement>('[data-page]:not([hidden]) h1')?.focus({preventScroll:true})});
+document.addEventListener('keydown',e=>{if(e.target instanceof Element&&e.target.closest('input,textarea,select,button,summary,a,[contenteditable]'))return;if(e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;const a=document.querySelector<HTMLAnchorElement>(e.key==='ArrowRight'?'[data-next]':e.key==='ArrowLeft'?'[data-prev]':'[data-none]');if(a&&!a.hidden){e.preventDefault();a.click()}});
+</script>
+</body></html>

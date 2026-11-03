@@ -1,0 +1,68 @@
+---
+// A choice for the student (docs/BRIEFING.md § 12, "Keuzes en takken"):
+//
+//   <Keuze naam="doel" vertakt vraag="Waaraan wil je vandaag werken?"
+//     opties={{ toets: 'Een schriftelijke toets', mondeling: 'Een mondeling examen' }} />
+//
+// `naam` is the stable key of the choice in localStorage, unique within the
+// module; the key of the chosen option is what is stored. With `vertakt` the
+// choice decides which steps follow: a <Stap tak="toets"> is only for a
+// student who chose `toets`. A module has at most one branching choice; the
+// module route checks the branches when it builds. `naam="tool"` asks which
+// AI tool the student uses; the <Tool> blocks after it follow that choice
+// ("Instructies per tool"). On a step with a <Keuze>, "Volgende" waits until
+// the student has chosen. Authors write no import and no client directive.
+import KeuzeIsland from './Keuze.tsx';
+import type { SourceChoice } from './checks';
+import { TOOL_CHOICE } from './tools';
+import { checkChoiceName, checkChoiceOptions, checkText } from '../vragen/authoring';
+
+interface Props {
+  naam: string;
+  vraag: string;
+  opties: Record<string, string>;
+  vertakt?: boolean;
+}
+
+const name = checkChoiceName(Astro.props.naam, Astro.locals);
+const vraag = checkText('Keuze', 'vraag', Astro.props.vraag);
+const options = checkChoiceOptions(name, Astro.props.opties);
+const { vertakt } = Astro.props;
+if (vertakt !== undefined && vertakt !== true) {
+  throw new Error(`<Keuze naam="${name}">: write \`vertakt\` without a value, or leave it out.`);
+}
+if (Astro.slots.has('default')) {
+  throw new Error(`<Keuze naam="${name}"> takes no content between its tags: write <Keuze … />.`);
+}
+
+// The module route read the branching choice and the tool choice from the
+// MDX source, for the labels of the branch steps (Stap.astro) and of the
+// tool blocks (Tool.astro), and for the rules that show the chosen tool's
+// blocks (ChosenTool.astro). It has to be exactly what renders here, or a
+// label could name an option that the student never sees.
+function checkSource(tag: string, source: SourceChoice | null | undefined, example: string): void {
+  if (source === undefined) {
+    throw new Error(`${tag} only works inside a module (src/content/modules/).`);
+  }
+  const same =
+    source !== null &&
+    source.name === name &&
+    Object.keys(source.options).length === options.length &&
+    options.every((option) => Object.hasOwn(source.options, option.key) && source.options[option.key] === option.label);
+  if (!same) {
+    throw new Error(
+      `${tag}: the options the build read from the module source differ from the ones this component got. ` +
+        `Write \`opties\` as an object of plain texts, such as ${example}.`,
+    );
+  }
+}
+const locals = Astro.locals as { branching?: SourceChoice | null; tool?: SourceChoice | null };
+if (vertakt === true) {
+  checkSource(`<Keuze naam="${name}" vertakt>`, locals.branching, "opties={{ toets: 'Een schriftelijke toets' }}");
+}
+if (name === TOOL_CHOICE) {
+  checkSource(`<Keuze naam="${name}">`, locals.tool, "opties={{ chatgpt: 'ChatGPT' }}");
+}
+---
+
+<KeuzeIsland name={name} question={vraag} options={options} branching={vertakt === true} client:visible />

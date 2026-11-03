@@ -1,0 +1,182 @@
+---
+title: Voorbeeldmodule
+kort: Een testmodule die de stappenspeler en de pagina per module controleert.
+graden: [2, 3]
+niveau: 2
+duur: 70
+aiGebruik: geen
+doelen: [1]
+status: beschikbaar
+volgorde: 99
+---
+
+<Stap titel="Welkom bij de voorbeeldmodule">
+Deze module bestaat alleen om de stappenspeler te testen. Zodra de eerste
+echte module klaar is, verdwijnt ze weer.
+
+Een module is een reeks korte stappen, zoals slides. Op elke stap staat één
+idee of één vraag.
+
+Klik op **Volgende** of druk op de pijltjestoets naar rechts.
+</Stap>
+
+<Stap titel="Zo werk je door een module">
+Je bepaalt zelf je tempo.
+
+- Ga verder met **Volgende**, of terug met **Vorige**.
+- De pijltjestoetsen links en rechts doen hetzelfde.
+- De balk bovenaan toont hoe ver je bent.
+- Je mag vooruitklikken en terugkeren wanneer je wil.
+- Je voortgang blijft in deze browser bewaard. Er gaat niets naar een server.
+
+Neem je tijd: lees elke stap rustig en doe wat er gevraagd wordt.
+</Stap>
+
+<Stap titel="Jouw beurt">
+Typ hieronder een zin. Druk daarna op de pijltjestoetsen links en rechts.
+Zolang je in het tekstveld staat, blijf je op deze stap.
+
+Wil je verder met de pijltjestoetsen? Druk dan eerst op Tab, of klik naast
+het tekstveld.
+
+<label for="voorbeeld-proefveld">Jouw zin</label>
+<textarea id="voorbeeld-proefveld" rows="4" placeholder="Typ hier je zin"></textarea>
+</Stap>
+
+<Stap titel="Hoe komt een chatbot aan zijn antwoord?">
+<Meerkeuze id="chatbot-antwoord" vraag="Wat doet een chatbot zoals ChatGPT als je hem iets vraagt?">
+  <Optie feedback="Een chatbot zoekt zijn antwoord niet op. Daarom kan hij ook dingen verzinnen die niet kloppen.">Hij zoekt het juiste antwoord op in een grote databank.</Optie>
+  <Optie juist feedback="Hij leerde uit heel veel tekst welke woorden goed na elkaar passen, en bouwt zo een antwoord op.">Hij voorspelt woord na woord een tekst die goed bij je vraag past.</Optie>
+  <Optie feedback="Er zit niemand achter het scherm. Het antwoord komt helemaal van de computer.">Een mens achter de schermen typt het antwoord.</Optie>
+  <Optie feedback="Sommige chatbots zoeken wel op het internet, maar ze kopiëren niet gewoon het eerste resultaat.">Hij kopieert het eerste resultaat van Google.</Optie>
+</Meerkeuze>
+</Stap>
+
+<Stap titel="AI in je dagelijks leven">
+<Meerkeuze id="ai-herkennen" vraag="Welke van deze toepassingen gebruiken AI?">
+  <Optie juist feedback="Spotify leert uit wat jij en anderen beluisteren, en voorspelt wat je ook leuk zult vinden.">De aanbevelingen in Spotify</Optie>
+  <Optie feedback="Een rekenmachine volgt vaste regels. Ze leert niets bij en geeft altijd hetzelfde antwoord.">Een rekenmachine</Optie>
+  <Optie juist feedback="Je gsm leerde jouw gezicht herkennen, ook met een bril of in het donker.">Je gsm ontgrendelen met je gezicht</Optie>
+  <Optie feedback="Een wekker doet precies wat je instelde. Er komt geen AI aan te pas.">Een wekker die elke dag om 7 uur afgaat</Optie>
+</Meerkeuze>
+</Stap>
+
+<Stap titel="Schrijf zelf een prompt">
+<DenkEerst id="prompt-leren" vraag="Je hebt een toets over fotosynthese. Schrijf een prompt waarmee een chatbot je helpt leren.">
+*„Ik zit in het derde jaar van het secundair en heb volgende week een toets
+over fotosynthese. Stel me vijf vragen, één voor één. Zeg na elk antwoord wat
+juist was en wat beter kan. Geef me niet meteen de oplossing.”*
+
+- Je zegt **wie je bent** en **wat je moet kennen**.
+- Je zegt **wat de chatbot moet doen**: vragen stellen.
+- De chatbot **zegt niet alles voor**: jij leert.
+</DenkEerst>
+</Stap>
+
+<Stap titel="Wat neem je mee?">
+<Confetti />
+
+Denk even terug aan de vorige stappen. Er is geen fout antwoord: schrijf op
+wat jij denkt.
+
+<Reflectie id="wat-geleerd" vraag="Wat weet je nu over chatbots dat je eerst nog niet wist?" />
+</Stap>
+
+<Stap titel="Je voortgang blijft bewaard">
+Herlaad deze pagina: je komt terug op deze stap. Ook je antwoorden op de
+vragen blijven staan.
+
+Het nummer van de stap staat ook in het adres van de pagina, achter het
+hekje (#). Open je de module later opnieuw, dan ga je verder waar je was.
+
+Wil je de module opnieuw doen? Klik onderaan op **Opnieuw beginnen**. Je gaat
+dan terug naar de eerste stap, en alles wat je in deze module invulde, wordt
+gewist.
+</Stap>
+
+<Stap titel="Kies je route">
+Hier splitst de module zich. Na je keuze zie je alleen de stappen voor jouw
+route; daarna komen beide routes weer samen. Wil je later wisselen? Kom dan
+terug naar deze stap en kies opnieuw.
+
+<Keuze naam="doel" vertakt vraag="Waaraan wil je vandaag werken?" opties={{ toets: 'Een schriftelijke toets', mondeling: 'Een mondeling examen' }} />
+</Stap>
+
+<Stap titel="Een toets voorbereiden met een chatbot" tak="toets">
+Een chatbot kan je overhoren. Vraag hem om je vragen te stellen, één voor
+één, en pas daarna te zeggen wat juist was.
+
+Zo oefen je zelf, in plaats van alleen antwoorden te lezen.
+</Stap>
+
+<Stap titel="Jouw eerste vraag" tak="toets">
+<Reflectie id="toets-overhoren" vraag="Voor welke toets zou jij je zo laten overhoren, en waarom?" />
+</Stap>
+
+<Stap titel="Een mondeling examen voorbereiden met een chatbot" tak="mondeling">
+Een chatbot kan de examinator spelen. Vraag hem om je vragen te stellen
+zoals op een mondeling examen, en om na je antwoord te zeggen wat duidelijker
+kan.
+
+Zeg je antwoorden luidop voor je ze typt: op het examen moet je ze ook
+zeggen.
+</Stap>
+
+<Stap titel="Kies je tool">
+Vanaf nu zie je alleen de handelingen voor de tool die je kiest. Wil je later
+wisselen? Kom dan terug naar deze stap en kies opnieuw.
+
+<Keuze naam="tool" vraag="Met welke tool werk je vandaag?" opties={{ chatgpt: 'ChatGPT', gemini: 'Gemini', notebook: 'Gemini Notebook', copilot: 'Copilot (schoolaccount)' }} />
+</Stap>
+
+<Stap titel="Open je tool">
+Open je tool en start een nieuw gesprek.
+
+<Tool naam="chatgpt">Ga naar [chatgpt.com](https://chatgpt.com) en klik op **Nieuwe chat**. Typ als eerste bericht: `Help me leren voor mijn toets.`</Tool>
+
+<Tool naam="gemini">Ga naar [gemini.google.com](https://gemini.google.com) en klik op **Nieuwe chat**.</Tool>
+
+<Tool naam="notebook">Maak op [notebooklm.google.com](https://notebooklm.google.com) een **nieuw notebook**. Voeg je cursus toe als bron.</Tool>
+
+<Tool naam="copilot">Ga naar [m365.cloud.microsoft/chat](https://m365.cloud.microsoft/chat) en meld je aan met je **schoolaccount**.</Tool>
+</Stap>
+
+<Stap titel="Kopieer je eerste prompt">
+Klik op **Kopieer** en plak de prompt in je tool. Vervang daar wat tussen
+haken staat door je eigen gegevens, en verstuur dan.
+
+<Prompt>
+Ik zit in het [jaar en richting]. Op [datum] heb ik een schriftelijke toets
+[vak] over [onderwerp].
+
+Stel me vijf vragen, één per keer. Wacht telkens op mijn antwoord en zeg dan
+wat juist was en wat beter kan.
+</Prompt>
+</Stap>
+
+<Stap titel="Leg eerst zelf een begrip uit je cursus uit">
+<Prompt id="uitleg-begrip" velden={{ begrip: 'Begrip', 'mijn uitleg': 'Mijn uitleg' }}>
+Mijn uitleg van [begrip]: [mijn uitleg]
+
+Klopt mijn uitleg? Zeg wat ontbreekt, en leg [begrip] daarna eenvoudig uit
+voor het [jaar en richting].
+</Prompt>
+</Stap>
+
+<Stap titel="Wat ging hier mis?">
+<Chat naast>
+<Jij>Leg fotosynthese uit.</Jij>
+<AI>Fotosynthese is het proces waarbij planten met zonlicht water en koolstofdioxide omzetten in suiker en zuurstof.</AI>
+</Chat>
+
+<Meerkeuze id="chat-context" vraag="Wat had de leerling beter gedaan?">
+  <Optie juist feedback="De AI weet niet in welk jaar je zit of waarvoor je het nodig hebt.">Meer context geven</Optie>
+  <Optie feedback="Beleefd mag, maar het antwoord wordt er niet beter van.">Beleefder vragen</Optie>
+  <Optie feedback="De vraag is al kort; er ontbreekt juist informatie.">Korter vragen</Optie>
+  <Optie feedback="Het antwoord klopt, maar past het bij jouw toets?">Niets, het is goed</Optie>
+</Meerkeuze>
+</Stap>
+
+<Stap titel="Klaar! Download je samenvatting">
+<Samenvatting />
+</Stap>

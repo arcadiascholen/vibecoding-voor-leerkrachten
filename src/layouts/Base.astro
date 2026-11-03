@@ -1,0 +1,127 @@
+---
+import '@fontsource-variable/figtree';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import logo from '../assets/logo/arcadia-logo.svg';
+
+interface Props {
+  title?: string;
+  description?: string;
+  // Fill exactly one screen when JavaScript runs: <main> hands the space
+  // under the header to its content. For the step player of a module page,
+  // which must fit on 1366 × 640 without scrolling (docs/BRIEFING.md § 12).
+  fill?: boolean;
+  // Less room above and below the content, for an overview that has to fit
+  // on 1366 × 640 (the module choice).
+  compact?: boolean;
+}
+
+// The named slot `head` goes at the end of <head>, before anything in
+// <body> is parsed: for state that has to apply before the first paint,
+// such as the chosen tool on a module page
+// (src/components/stappen/ChosenTool.astro).
+
+const siteName = 'AI-leerpad · Arcadia Scholen';
+const {
+  title,
+  description = 'Een digitaal leerpad over artificiële intelligentie voor de leerlingen van Arcadia Scholen.',
+  fill = false,
+  compact = false,
+} = Astro.props;
+const fullTitle = title ? `${title} · ${siteName}` : siteName;
+
+// Logo in the header bar: 24–30px high (docs/DESIGN.md).
+const logoHeight = 28;
+const logoWidth = Math.round((logo.width * logoHeight) / logo.height);
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{fullTitle}</title>
+    {/* Marks that JavaScript runs, before the first paint, so styles for the
+        scripted state apply at once instead of after a flash. */}
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <slot name="head" />
+  </head>
+  <body class:list={[{ fill }]}>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand" href={import.meta.env.BASE_URL}>
+          <img src={logo.src} width={logoWidth} height={logoHeight} alt="Arcadia scholen" />
+          <span class="brand-site">AI-leerpad</span>
+        </a>
+      </div>
+    </header>
+    <main class:list={['site-main', { 'site-main--fill': fill, 'site-main--compact': compact }]}>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .site-header-inner {
+    display: flex;
+    align-items: center;
+    min-height: var(--shell-bar);
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 0 var(--space-5);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--forest);
+    text-decoration: none;
+  }
+
+  .brand img {
+    display: block;
+  }
+
+  .brand-site {
+    padding-left: var(--space-3);
+    border-left: 1px solid var(--line);
+    font-size: var(--text-h3-size);
+    line-height: var(--text-h3-line);
+    font-weight: var(--text-h3-weight);
+    letter-spacing: var(--text-h3-tracking);
+  }
+
+  .site-main {
+    flex: 1;
+    width: 100%;
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: var(--space-7) var(--space-5);
+  }
+
+  .site-main--compact {
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-5);
+  }
+
+  /* `fill`, only with JavaScript; without it the page scrolls as usual. */
+  :global(.js) .fill {
+    height: 100dvh;
+  }
+
+  :global(.js) .site-main--fill {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3);
+  }
+</style>
