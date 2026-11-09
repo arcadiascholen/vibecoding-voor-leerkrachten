@@ -6,37 +6,325 @@ import '../styles/global.css';
 import '../styles/workshop.css';
 import logo from '../assets/logo/arcadia-logo.svg';
 import Prompt from '../components/inhoud/Prompt.astro';
-const groups = [
- {title:'Intro', items:[['start','Welkom'],['definitie','Wat is vibecoding?'],['waarom','Waarom voor leerkrachten?'],['tools','Tools en privacy'],['vandaag','Wat doen we vandaag?'],['klein','Hou het klein']]},
- {title:'Zelf aan de slag',items:[['behoefte','1. Behoefte'],['oplossing','2. Oplossing'],['bouwen','3. Bouwen'],['testen','4. Testen'],['itereren','5. Itereren']]},
- {title:'Verder',items:[['bewaren','Bewaren en gebruiken'],['publiceren','Publiceren en delen'],['inspiratie','Inspiratie en uitbreidingen']]}
+const pages = [
+  {
+    "id": "start",
+    "group": "Intro",
+    "label": "Welkom",
+    "title": "Intro tot vibecoding",
+    "lead": "Van een behoefte in je les naar een kleine, bruikbare toepassing.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Samen ontdekken</h2><p>Een korte intro en een live demonstratie.</p></div><div class=\"panel\"><h2>Zelf bouwen</h2><p>Vertrek vanuit je eigen lessen. Maak, test en verbeter één kleine toepassing.</p></div><div class=\"panel\"><h2>Delen met leerlingen</h2><p>Bewaar je werk en maak er een bereikbare link van.</p></div></div><div class=\"notice\"><strong>90 minuten.</strong> Je hoeft geen programmeur te zijn. Je brengt je vakkennis, leservaring en een laptop mee.</div>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "definitie",
+    "group": "Intro",
+    "label": "Wat is vibecoding?",
+    "title": "Bouwen met natuurlijke taal",
+    "lead": "Je beschrijft wat je wilt maken. AI schrijft de code. Jij probeert het resultaat uit en stuurt bij.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Zelf programmeren</h2><p>Je schrijft zelf code en gebruikt programmeerkennis om de toepassing op te bouwen en fouten te zoeken.</p></div><div class=\"panel\"><h2>Vibecoden</h2><p>Je geeft richting in gewone taal en beoordeelt wat de toepassing doet. Programmeerkennis kan helpen, maar is geen voorwaarde om te starten.</p></div></div><div class=\"notice\"><strong>Jij beschrijft → AI bouwt → jij test en stuurt bij.</strong><br>Je maakt bijvoorbeeld een website, oefening, simulatie of praktisch hulpmiddel.</div>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "waarom",
+    "group": "Intro",
+    "label": "Waarom? · les en organisatie",
+    "title": "Waar kan dit jouw les helpen?",
+    "lead": "Een kleine toepassing op maat kan een concrete lesbehoefte aanpakken.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Organiseren</h2><p>Groepjes maken kost tijd → een groepenmaker met instelbare voorwaarden.</p></div><div class=\"panel\"><h2>Activeren</h2><p>Niet iedereen denkt mee → eerst voorspellen of kiezen, daarna bespreken.</p></div><div class=\"panel\"><h2>Verklaren</h2><p>Een verband blijft abstract → een interactieve tijdlijn, grafiek of simulatie.</p></div></div><div class=\"notice\">De vraag blijft: <strong>wat kan de leerling hiermee doen, onderzoeken of begrijpen?</strong></div>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "waarom-leren",
+    "group": "Intro",
+    "label": "Waarom? · leren en feedback",
+    "title": "Ondersteunen, oefenen en terugblikken",
+    "lead": "Kies de interactie die bij je leerdoel past.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Differentiëren</h2><p>Hints op aanvraag, kleinere tussenstappen of verdiepingsvragen bij dezelfde leerstof.</p></div><div class=\"panel\"><h2>Formatief evalueren</h2><p>Een begrippencheck die denkfouten zichtbaar maakt en een nieuwe oefenkans biedt.</p></div><div class=\"panel\"><h2>Feedback en reflectie</h2><p>Gerichte peerfeedback met één rubriccriterium, of een terugblik met concrete kwaliteitscriteria.</p></div></div><div class=\"notice\"><strong>Digitaal is niet automatisch leerzamer.</strong> Laat leerlingen voorspellen, verklaren, oefenen of hun resultaat beoordelen.</div>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "voorbeelden",
+    "group": "Intro",
+    "label": "Voorbeelden",
+    "title": "Bekijk wat er mogelijk is",
+    "lead": "Kijk telkens naar de behoefte achter de toepassing.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2><a href=\"https://populatie-play.lovable.app\" target=\"_blank\" rel=\"noopener noreferrer\">Ecosysteem in balans ↗</a></h2><p>Onderzoek wat veranderingen doen met populaties. Van kijken naar zelf uitproberen.</p></div><div class=\"panel\"><h2><a href=\"https://rubric-roulette.vercel.app\" target=\"_blank\" rel=\"noopener noreferrer\">Rubric-roulette ↗</a></h2><p>Richt feedback op één criterium. Van algemene opmerkingen naar gericht beoordelen.</p></div><div class=\"panel\"><h2><a href=\"https://taalkampioen.vercel.app\" target=\"_blank\" rel=\"noopener noreferrer\">Taalkampioen ↗</a></h2><p>Verschillende oefenvormen bij woordenschat. Inspiratie voor afwisselend oefenen.</p></div></div><p class=\"small\">Voorbeelden van andere makers, verzameld in <a href=\"https://vibecodenvoordocenten.vercel.app/best-practices\" target=\"_blank\" rel=\"noopener noreferrer\">Vibe Coden voor docenten ↗</a>. De mogelijkheden en beschikbaarheid kunnen veranderen.</p>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "tools",
+    "group": "Intro",
+    "label": "Welke tools?",
+    "title": "Je kunt op verschillende plekken bouwen",
+    "lead": "We starten vandaag vanuit een chatbot die je al gebruikt.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Chatbots</h2><p><strong>Copilot · ChatGPT · Claude · Gemini</strong><br>Bespreek je idee, laat code maken en stuur bij via het gesprek.</p></div><div class=\"panel\"><h2>Code- en appomgevingen</h2><p><strong>Codex · Claude Code · Lovable · Google AI Studio</strong><br>Omgevingen gericht op het bouwen en verder ontwikkelen van toepassingen.</p></div></div><div class=\"notice\">De grens vervaagt: chatbots hebben ook bouw- en voorbeeldweergaven. <strong>Vibecoding is een manier van werken, geen specifieke tool.</strong></div><p class=\"small\">Copilot met je schoolaccount is ons vertrekpunt. Een gratis account bij andere tools kan volstaan om te starten; functies en gebruikslimieten verschillen.</p>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "privacy",
+    "group": "Intro",
+    "label": "Privacy",
+    "title": "Werk bewust met gegevens",
+    "lead": "Gebruik voor deze workshop fictieve leerlinggegevens.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Copilot · schoolaccount</h2><p>Met je werk- of schoolaccount geldt organisatiebescherming. Prompts en antwoorden worden niet gebruikt om de basismodellen te trainen.</p></div><div class=\"panel\"><h2>ChatGPT · persoonlijk account</h2><p>Bij Instellingen → Gegevensbeheer kun je ‘Het model voor iedereen verbeteren’ uitschakelen, ook gratis. Dat is niet hetzelfde als de bescherming van een schoolaccount.</p></div></div><div class=\"notice\"><strong>Geen namen, punten of gevoelige leerlinginformatie.</strong> Controleer vóór publicatie ook of er persoonsgegevens of geheime sleutels in het bestand staan.</div><p class=\"small\">Bronnen: <a href=\"https://support.microsoft.com/en-us/privacy/data-protection-when-using-microsoft-365-copilot-chat-for-work-or-school\" target=\"_blank\" rel=\"noopener noreferrer\">Microsoft ↗</a> · <a href=\"https://help.openai.com/en/articles/7730893-data-controls-in-chatgpt\" target=\"_blank\" rel=\"noopener noreferrer\">OpenAI ↗</a></p>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "vandaag",
+    "group": "Intro",
+    "label": "Wat doen we vandaag?",
+    "title": "Een werkende eerste versie",
+    "lead": "We houden de technische kant bewust eenvoudig.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Vandaag wel</h2><p>Eén behoefte, één kernfunctie. Bouwen met een chatbot, zelf testen, gericht verbeteren, bewaren en publiceren.</p></div><div class=\"panel\"><h2>Voor later</h2><p>Leerlingaccounts, databases, centrale resultaatverzameling, ingebouwde AI-tutors en volledige leerplatformen.</p></div></div><div class=\"notice\"><strong>Je hoeft vandaag geen programmeertaal te leren.</strong> Je oefent hoe je een idee beschrijft, een resultaat beoordeelt en gericht bijstuurt.</div>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "klein",
+    "group": "Intro",
+    "label": "Hou het klein",
+    "title": "Hoe groot is jouw bouwidee?",
+    "lead": "Wat de toepassing moet kunnen, bepaalt de complexiteit.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Klein beginnen</h2><p>Een timer met fasen, interactieve grafiek of stappenplan. Werkt op één toestel, zonder accounts of gedeelde opslag.</p></div><div class=\"panel\"><h2>Meer onderdelen</h2><p>Meerdere oefenniveaus, instelbare inhoud, een downloadbaar verslag of verschillende routes.</p></div><div class=\"panel\"><h2>Groter project</h2><p>Leerlingen loggen in; antwoorden worden verzameld; jij ziet een dashboard en bewaart voortgang.</p></div></div><div class=\"notice\">Een check-out op één toestel is kleiner dan antwoorden van een hele klas live verzamelen.<br><strong>Wat kun je weglaten en toch testen of je idee helpt?</strong></div>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "route",
+    "group": "Intro",
+    "label": "Onze aanpak",
+    "title": "Van behoefte naar bruikbaar hulpmiddel",
+    "lead": "Eerst bekijken we samen het proces. Daarna volg je dezelfde route met je eigen idee.",
+    "body": "<ol class=\"route-list\"><li><strong>Behoefte</strong> — wat wil je verbeteren?</li><li><strong>Oplossing</strong> — welke kleine interactie kan helpen?</li><li><strong>Bouwen</strong> — maak een eerste versie.</li><li><strong>Testen</strong> — werkt het, klopt het en is het duidelijk?</li><li><strong>Itereren</strong> — verbeter gericht en test opnieuw.</li></ol><div class=\"notice\"><strong>Daarna:</strong> bewaren en samen publiceren via Netlify.</div>",
+    "prompt": "",
+    "tip": "Blijf tijdens de vijf stappen in hetzelfde AI-gesprek. Je hoeft je doelgroep, behoefte en gekozen oplossing dan niet telkens te herhalen.",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "behoefte",
+    "group": "Zelf aan de slag",
+    "label": "1. Behoefte",
+    "title": "Wat wil je verbeteren in je les?",
+    "lead": "Bouw vanuit een concrete behoefte. Onderzoek daarna of een app kan helpen.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Herken je dit?</h2><p>Groepen maken kost tijd. Leerlingen verliezen hun plaats in een stappenplan. Je wilt zien wat ze van een les meenemen.</p></div><div class=\"panel\"><h2>Maak het concreet</h2><p>Waar lopen jij of je leerlingen tegenaan? Wat moet er beter gaan? Een bestaande tool of andere werkvorm kan ook passen.</p></div></div>",
+    "prompt": "Ik geef [vak] aan [doelgroep]. Ik merk dat [concrete situatie]. Ik wil bereiken dat [gewenste verandering].\n\nStel me maximaal drie vragen om mijn behoefte scherper te krijgen. Stel nog geen app voor en schrijf nog geen code.",
+    "tip": "Brainstorm met AI. Je idee hoeft nog niet helder te zijn: laat AI vragen stellen. Spreek je behoefte gerust in; zeker thuis kan vertellen makkelijker zijn dan typen. Controleer de tekst vóór je verstuurt.",
+    "done": "Je kunt zeggen: “Ik merk dat … en ik wil bereiken dat …”",
+    "cycle": "behoefte"
+  },
+  {
+    "id": "oplossing",
+    "group": "Zelf aan de slag",
+    "label": "2. Oplossing",
+    "title": "Welke kleine toepassing kan helpen?",
+    "lead": "Verken mogelijkheden en kies één duidelijke kernfunctie.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Vergelijk ideeën</h2><p>Wat doet de gebruiker? Hoe helpt dat jouw behoefte? Wat is de kleinste bruikbare versie?</p></div><div class=\"panel\"><h2>Leg je keuze vast</h2><p>Voor [doelgroep] wil ik een appje dat [duidelijke actie] doet, zodat [gewenst effect].</p></div></div>",
+    "prompt": "Bedenk op basis van mijn behoefte drie eenvoudige interactieve toepassingen. Beschrijf per voorstel wat de gebruiker doet, hoe dit mijn behoefte helpt aanpakken en wat de kleinste bruikbare eerste versie is.\n\nHoud rekening met [voorwaarden, bijvoorbeeld toestellen of zonder leerlingaccounts]. Adviseer waarmee ik het best begin en waarom. Schrijf nog geen code.",
+    "tip": "Gebruik AI als brainstormpartner: vraag om alternatieven en laat je idee kleiner maken. Jij kiest op basis van je lesdoel; AI mag je ook kritische vragen stellen.",
+    "done": "Je hebt één oplossing gekozen en benoemd wat de eerste versie wel en nog niet moet kunnen.",
+    "cycle": "oplossing"
+  },
+  {
+    "id": "bouwen",
+    "group": "Zelf aan de slag",
+    "label": "3. Bouwen",
+    "title": "Maak nu de eerste versie",
+    "lead": "Gebruik hetzelfde gesprek en verwijs naar je gekozen oplossing.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Geef richting</h2><p>Welke inhoud gebruikt de toepassing? Wat doet de gebruiker en welke reactie volgt? Vul alleen aan wat nog niet besproken is.</p></div><div class=\"panel\"><h2>Begin met de kern</h2><p>Gebruik concrete voorbeeldinhoud. Laat eerst de belangrijkste interactie werken; uitbreidingen komen na het testen.</p></div></div>",
+    "prompt": "Bouw nu een eerste werkende versie van het gekozen idee. Houd het bij de afgesproken kernfunctie en voeg geen extra functies toe.\n\nMaak een compleet HTML-bestand met HTML, CSS en JavaScript in hetzelfde bestand, zonder externe diensten, accounts of database. Zo hoef ik maar één bestand te downloaden en te openen.\n\nGeef indien mogelijk een downloadbaar HTML-bestand terug. Lukt dat niet, geef dan de volledige code met korte instructies om die als HTML-bestand te bewaren en te openen.",
+    "tip": "Je hoeft de technische instructie niet zelf te onthouden: kopieer de prompt. Terwijl AI bouwt, bedenk je welke knoppen, antwoorden of handelingen je straks gaat testen.",
+    "done": "Je hebt een eerste versie die je kunt openen en uitproberen.",
+    "cycle": "bouwen"
+  },
+  {
+    "id": "openen",
+    "group": "Zelf aan de slag",
+    "label": "Je bestand openen",
+    "title": "Van AI-antwoord naar toepassing",
+    "lead": "Een HTML-bestand is een webpagina die je browser kan openen.",
+    "body": "<ol class=\"route-list\"><li><strong>Download</strong> het HTML-bestand uit het AI-gesprek.</li><li><strong>Open</strong> het vanuit je downloadmap in Edge, Chrome of een andere browser.</li><li><strong>Probeer</strong> de toepassing echt uit. Een voorbeeldweergave in de chatbot is handig, maar controleer ook het bestand zelf.</li></ol>",
+    "prompt": "Ik heb alleen code gekregen. Leg me stap voor stap uit hoe ik die op [Windows/Mac] met een gewone teksteditor bewaar als index.html en open in mijn browser. Geef instructies zonder extra programma’s te installeren.",
+    "tip": "Sla code op als platte tekst, niet als Word-document. Controleer dat de naam eindigt op .html en niet op .html.txt. Vraag AI hulp als het openen niet lukt.",
+    "done": "",
+    "cycle": "bouwen"
+  },
+  {
+    "id": "testen",
+    "group": "Zelf aan de slag",
+    "label": "4. Testen",
+    "title": "Werkt het, klopt het en is het duidelijk?",
+    "lead": "Test zelf en laat daarna een collega proberen zonder uitleg te geven.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Functionaliteit</h2><p>Werken knoppen en reacties? Test ook leeg invullen, fout antwoorden, teruggaan en opnieuw beginnen.</p></div><div class=\"panel\"><h2>Inhoud</h2><p>Kloppen uitleg, instructies, antwoorden en feedback? Helpt de interactie bij je leerdoel?</p></div><div class=\"panel\"><h2>Gebruiksvriendelijkheid</h2><p>Weet de leerling wat die moet doen? Zijn tekst, knoppen en voortgang duidelijk en leesbaar?</p></div></div>",
+    "prompt": "Beoordeel de huidige toepassing op inhoud (correctheid en leerdoel), functionaliteit (werking, fouten en onverwachte handelingen) en gebruiksvriendelijkheid (duidelijkheid, leesbaarheid en navigatie).\n\nTest wat je daadwerkelijk kunt testen. Benoem wat je hebt uitgeprobeerd, wat je alleen uit de code afleidt en wat ik zelf nog moet controleren.\n\nGeef maximaal vijf aanbevelingen op volgorde van prioriteit. Vermeld per aanbeveling het probleem, de verbetering, de prioriteit met reden, de voordelen en mogelijke nadelen, en of je dit nu zou aanpassen of later.\n\nPas de code nog niet aan.",
+    "tip": "Laat AI kritisch meekijken én test zelf. AI kan niet in elke omgeving de toepassing echt bedienen. Controleer de vakinhoud zelf en kijk waar een collega twijfelt.",
+    "done": "Je weet wat al werkt en kiest één belangrijke verbetering.",
+    "cycle": "testen"
+  },
+  {
+    "id": "itereren",
+    "group": "Zelf aan de slag",
+    "label": "5. Itereren",
+    "title": "Verbeter één ding tegelijk",
+    "lead": "Gebruik wat je tijdens het testen hebt ontdekt.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Beschrijf concreet</h2><p>Wat deed je? Wat gebeurde er? Wat had je verwacht? “Het werkt niet” geeft weinig richting.</p></div><div class=\"panel\"><h2>Behoud wat werkt</h2><p>Bewaar eerst je werkende versie. Vraag één gerichte wijziging, open het nieuwe bestand en test ook de bestaande functies opnieuw.</p></div></div>",
+    "prompt": "Tijdens het testen merk ik dat [concrete vaststelling].\n\nPas dit aan zodat [gewenste werking]. Behoud de rest van de inhoud, vormgeving en werking. Voeg geen extra functies toe. Geef het aangepaste volledige HTML-bestand terug.",
+    "tip": "Spreek je feedback gerust in alsof je het aan een collega uitlegt. Is je oplossing niet passend? Ga terug naar oplossing of behoefte; je hoeft niet op dit idee voort te bouwen.",
+    "done": "De kernfunctie werkt, de inhoud klopt en de toepassing helpt bij je gekozen doel. Testen ↔ verbeteren.",
+    "cycle": "itereren"
+  },
+  {
+    "id": "vormgeving",
+    "group": "Zelf aan de slag",
+    "label": "Lay-out en huisstijl",
+    "title": "Maak het helder en herkenbaar",
+    "lead": "Eerst een bruikbare toepassing, daarna de vormgeving verfijnen.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Helder voor de gebruiker</h2><p>Rustige indeling, leesbare tekst, voldoende contrast en duidelijke knoppen. Gebruik tekst of iconen naast kleur.</p></div><div class=\"panel\"><h2>Herkenbaar voor je school</h2><p>Voeg het echte logo, kleurcodes en richtlijnen toe. Vind ze in de <a href=\"https://www.arcadiascholen.be/brands\" target=\"_blank\" rel=\"noopener noreferrer\">huisstijlgids van Arcadia ↗</a>.</p></div></div>",
+    "prompt": "Pas nu alleen de vormgeving aan aan de bijgevoegde huisstijl van [school/scholengroep].\n\nZorg voor een rustige indeling, goed leesbare tekst, voldoende contrast en duidelijke knoppen. Gebruik de huisstijlkleuren en het echte logo waar ze de leesbaarheid ondersteunen.\n\nBehoud alle inhoud en werking. Geef het volledige aangepaste HTML-bestand terug.",
+    "tip": "Geef AI de relevante richtlijnen en logobestanden mee. Alleen een link delen garandeert niet dat AI de inhoud kan lezen. Controleer na de aanpassing opnieuw de werking.",
+    "done": "",
+    "cycle": "itereren"
+  },
+  {
+    "id": "bewaren",
+    "group": "Bewaren en delen",
+    "label": "Bewaren",
+    "title": "Bewaar je werkende versie",
+    "lead": "Zo kun je later verder, ook als je AI-gesprek niet meer openstaat.",
+    "body": "<ol class=\"route-list\"><li>Download het werkende HTML-bestand.</li><li>Geef het een herkenbare naam, bijvoorbeeld <strong>mijn-lesapp-v1.html</strong>.</li><li>Bewaar het in een vaste map en houd bij grotere wijzigingen een vorige versie bij.</li><li>Open het opnieuw in je browser en test de kernfunctie.</li></ol><div class=\"notice\"><strong>Een bestand delen</strong> kan al. <strong>Publiceren</strong> maakt het voor leerlingen makkelijker: ze openen gewoon een link.</div>",
+    "prompt": "",
+    "tip": "Bewaar ook je AI-gesprek of een korte beschrijving van je behoefte en oplossing. Dan kun je later gericht verder werken.",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "publiceren",
+    "group": "Bewaren en delen",
+    "label": "Publiceren · voorbereiden",
+    "title": "Van bestand naar link",
+    "lead": "We bekijken dit samen. Heb je al een werkend bestand? Dan kun je meteen meedoen.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>1 · Maak een map</h2><p>Maak bijvoorbeeld de map mijn-lesapp. Zet je werkende HTML-bestand erin en hernoem het naar <strong>index.html</strong>.</p></div><div class=\"panel\"><h2>2 · Controleer de inhoud</h2><p>Geen persoonsgegevens, geheime sleutels of vertrouwelijke antwoorden. De broncode van een publieke toepassing is te bekijken.</p></div><div class=\"panel\"><h2>3 · Meld je aan</h2><p>Maak een account of meld je aan bij <a href=\"https://app.netlify.com\" target=\"_blank\" rel=\"noopener noreferrer\">Netlify ↗</a>, zodat je de site kunt beheren en aanpassen.</p></div></div><div class=\"notice\">Afbeeldingen als aparte bestanden? Zet ze ook in de map en gebruik relatieve verwijzingen. Open index.html nog eens vóór je uploadt.</div>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "netlify",
+    "group": "Bewaren en delen",
+    "label": "Netlify · online zetten",
+    "title": "Publiceer met Netlify Drop",
+    "lead": "Je hoeft hiervoor geen GitHub te gebruiken.",
+    "body": "<ol class=\"route-list\"><li>Open <a href=\"https://app.netlify.com/drop\" target=\"_blank\" rel=\"noopener noreferrer\"><strong>Netlify Drop ↗</strong></a> terwijl je aangemeld bent.</li><li>Sleep je <strong>map met index.html</strong> naar het uploadvak.</li><li>Wacht op de publicatie en open de link die eindigt op <strong>.netlify.app</strong>.</li><li>Controleer de toegang: maak de site publiek als hij nog privé staat.</li><li>Open de link in een <strong>privévenster</strong>. Werkt hij zonder jouw account? Deel hem via Smartschool of Teams.</li></ol><p class=\"small\">Netlify heeft gebruikslimieten en verschillende abonnementen. Voor deze oefening heb je geen betaalde uitbreiding nodig. <a href=\"https://docs.netlify.com/start/quickstarts/netlify-drop-quickstart/\" target=\"_blank\" rel=\"noopener noreferrer\">Officiële instructies ↗</a></p>",
+    "prompt": "",
+    "tip": "Krijg je “Page not found”? Controleer of index.html direct in de geüploade map staat, niet verstopt in nog een submap.",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "bijwerken",
+    "group": "Bewaren en delen",
+    "label": "Je site bijwerken",
+    "title": "Een nieuwe versie, dezelfde link",
+    "lead": "Een wijziging op je laptop verschijnt niet automatisch online.",
+    "body": "<ol class=\"route-list\"><li>Laat AI de aanpassing maken en test het nieuwe HTML-bestand.</li><li>Vervang <strong>index.html</strong> in je publicatiemap.</li><li>Open in Netlify je <strong>bestaande project</strong>.</li><li>Upload de bijgewerkte map bij <strong>Production deploys</strong>. Controleer daarna opnieuw je vaste link.</li></ol><div class=\"notice\"><strong>Publiceren verzamelt niet automatisch leerlingantwoorden.</strong> Een oefening kan lokaal feedback geven zonder resultaten naar jou te sturen.</div>",
+    "prompt": "",
+    "tip": "Maak niet voor elke aanpassing een nieuwe site aan via de algemene Drop-pagina. Werk het bestaande project bij, zodat de link voor leerlingen gelijk blijft.",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "alternatieven",
+    "group": "Bewaren en delen",
+    "label": "Andere publicatieroutes",
+    "title": "Je kunt ook elders publiceren",
+    "lead": "Kies één werkwijze die bij jou past.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2><a href=\"https://vercel.com/drop\" target=\"_blank\" rel=\"noopener noreferrer\">Vercel Drop ↗</a></h2><p>Een bestand of map uploaden en publiceren. Een alternatief voor Netlify.</p></div><div class=\"panel\"><h2><a href=\"https://learn.chatgpt.com/docs/sites/creating-a-site\" target=\"_blank\" rel=\"noopener noreferrer\">ChatGPT Sites ↗</a></h2><p>Bouwen en publiceren vanuit ChatGPT, als Sites op jouw account beschikbaar is. Controleer de toegang voor je leerlingen.</p></div><div class=\"panel\"><h2><a href=\"https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub Pages ↗</a></h2><p>Code bewaren, wijzigingen bijhouden en publiceren vanuit een repository. Ook dit leerpad staat op GitHub Pages.</p></div></div>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "inspiratie",
+    "group": "Verder ontdekken",
+    "label": "Inspiratie",
+    "title": "Wat zou jij hierna kunnen maken?",
+    "lead": "Breid uit vanuit een nieuwe behoefte, niet alleen omdat het kan.",
+    "body": "<div class=\"cards\"><div class=\"panel\"><h2>Meer inzicht</h2><p>Voorspellen, vergelijken, parameters veranderen en een verklaring bij het resultaat vragen.</p></div><div class=\"panel\"><h2>Passende ondersteuning</h2><p>Hints op aanvraag, uitleg bij een fout en een compacte of begeleide route.</p></div><div class=\"panel\"><h2>Terugblikken</h2><p>Een lokaal verslag downloaden, een zelfbeoordeling invullen of een resultaat vergelijken met criteria.</p></div></div><p><a href=\"https://vibecodenvoordocenten.vercel.app/best-practices\" target=\"_blank\" rel=\"noopener noreferrer\">Bekijk de inspiratiebank ↗</a> · <a href=\"https://stilte-les-starter.vercel.app/\" target=\"_blank\" rel=\"noopener noreferrer\">Stilte les starter ↗</a></p>",
+    "prompt": "",
+    "tip": "Gedeelde opslag, accounts en AI in je toepassing zijn volgende stappen. Begin niet meteen opnieuw met een groot platform.",
+    "done": "",
+    "cycle": ""
+  },
+  {
+    "id": "slot",
+    "group": "Verder ontdekken",
+    "label": "Neem mee",
+    "title": "Van idee naar iets bruikbaars",
+    "lead": "Je hoeft niet alles in één keer te kunnen.",
+    "body": "<div class=\"panel\"><h2>Jouw volgende les</h2><p>Bij welke les wil je jouw toepassing gebruiken? Wat ga je observeren om te weten of ze helpt?</p></div><div class=\"notice\"><strong>Behoefte → oplossing → bouwen → testen → itereren.</strong><br>Blijf in hetzelfde gesprek, houd het klein en gebruik je vakkennis om te beoordelen.</div><p>Bewaar deze link. Via het menu vind je de prompts later meteen terug.</p>",
+    "prompt": "",
+    "tip": "",
+    "done": "",
+    "cycle": ""
+  }
 ];
-const items=groups.flatMap(g=>g.items);
+const groups = [...new Set(pages.map(p=>p.group))].map(title=>({title,items:pages.filter(p=>p.group===title)}));
+const cycle = pages.filter(p=>['behoefte','oplossing','bouwen','testen','itereren'].includes(p.id));
 ---
 <!doctype html>
-<html lang="nl"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Intro tot vibecoding · AI voor leerkrachten</title><meta name="description" content="Van een behoefte in je les naar een kleine, bruikbare toepassing."/><script is:inline>document.documentElement.classList.add('js');</script></head>
-<body>
-<a class="skip" href="#inhoud">Ga naar inhoud</a>
-<header><a href="#start"><img src={logo.src} height="28" alt="Arcadia scholen"/> <strong>AI voor leerkrachten</strong></a><span>Technische proef</span></header>
-<div class="shell"><aside><details open><summary>Leerpad · navigatie</summary><nav aria-label="Leerpad">{groups.map(g=><div class="group"><p class="eyebrow">{g.title}</p><ul>{g.items.map(([id,label])=><li><a href={`#${id}`} data-nav={id}>{label}</a></li>)}</ul></div>)}</nav></details></aside>
+<html lang="nl"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Intro tot vibecoding · AI voor leerkrachten</title><meta name="description" content="Van een behoefte in je les naar een kleine, bruikbare toepassing. Workshop en kopieerbare prompts voor leerkrachten."/><script is:inline>document.documentElement.classList.add('js');</script></head>
+<body><a class="skip" href="#inhoud">Ga naar inhoud</a>
+<header><a href="#start"><img src={logo.src} height="28" alt="Arcadia scholen"/><strong>Vibecoding voor leerkrachten</strong></a><span>Workshop · naslagwerk</span></header>
+<div class="shell"><aside><details open><summary>Leerpad · navigatie</summary><nav aria-label="Leerpad">{groups.map(g=><div class="group"><p class="eyebrow">{g.title}</p><ul>{g.items.map(p=><li><a href={`#${p.id}`} data-nav={p.id}>{p.label}</a></li>)}</ul></div>)}</nav></details></aside>
 <main id="inhoud" tabindex="-1">
-<nav class="cycle" aria-label="De vijf stappen">{groups[1].items.map(([id,label],i)=><><a href={`#${id}`} data-cycle={id}>{label}</a>{i<4&&<span aria-hidden="true">→</span>}</>)}</nav>
-{items.map(([id,label])=><section data-page={id} id={id} aria-labelledby={`title-${id}`}>
-{id==='start'?<><p class="eyebrow">Workshop · 90 minuten · secundair onderwijs</p><h1 id={`title-${id}`}>Intro tot vibecoding</h1><p class="lead">Van een behoefte in je les naar een kleine, bruikbare toepassing.</p><div class="panel"><h2>Bouwen met natuurlijke taal</h2><p>Je beschrijft wat je wilt maken. AI schrijft de code. Jij test of het werkt en stuurt bij.</p><p><strong>Jouw vakkennis en didactische keuzes geven richting.</strong> Je hoeft geen programmeur te zijn om te starten.</p></div><div class="notice"><strong>Eerste technische proef.</strong> De pagina ‘Behoefte’ is uitgewerkt. De andere onderdelen staan klaar in het menu en worden nog aangevuld.</div><a class="button" href="#behoefte">Probeer de eerste stap →</a></>
-:id==='behoefte'?<><p class="eyebrow">Stap 1 · Eerst de behoefte</p><h1 id={`title-${id}`}>Wat wil je verbeteren in je les?</h1><p class="lead">Vertrek vanuit iets waar jij of je leerlingen tegenaan lopen. Onderzoek daarna of een app daarbij kan helpen.</p><div class="columns"><div class="panel"><h2>Herken je dit?</h2><ul><li>Groepen samenstellen kost me veel tijd.</li><li>Ik moet telkens de volgende werkfase aankondigen.</li><li>Ik wil weten wat leerlingen meenemen uit mijn les.</li><li>Leerlingen zien losse gebeurtenissen, maar geen verbanden.</li><li>Het effect van een parameter op een grafiek blijft abstract.</li></ul></div><div class="panel"><h2>Maak het concreet</h2><ol><li>Waar lopen we regelmatig tegenaan?</li><li>Wat zou er beter gaan als dit opgelost was?</li><li>Kan een interactieve toepassing daarbij helpen?</li></ol><p>Een bestaande tool of een andere werkvorm kan ook passen.</p></div></div><details class="prompt-details"><summary>Prompt · Laat AI eerst meedenken</summary><p class="small">Begin een nieuw AI-gesprek en blijf daarin voor de volgende stappen. Gebruik fictieve leerlinggegevens.</p><Prompt><p>Ik geef [vak] aan [doelgroep]. Ik merk dat [concrete situatie]. Ik wil bereiken dat [gewenste verandering].</p><p>Stel me maximaal drie vragen om mijn behoefte scherper te krijgen. Stel nog geen app voor en schrijf nog geen code.</p></Prompt></details><div class="notice"><strong>Klaar?</strong> Je kunt zeggen: ‘Ik merk dat … en ik wil bereiken dat …’</div></>
-:<><p class="eyebrow">Intro tot vibecoding · in opbouw</p><h1 id={`title-${id}`}>{label}</h1><div class="panel"><h2>Deze stap vullen we nog aan</h2><p>Dit is een eerste technische proef van de vormgeving en navigatie. De inhoud van deze pagina volgt.</p></div><a href="#behoefte">Probeer de uitgewerkte pagina Behoefte →</a></>}
+<nav class="cycle" aria-label="De vijf stappen">{cycle.map((p,i)=><><a href={`#${p.id}`} data-cycle={p.id}>{p.label}</a>{i<4&&<span aria-hidden="true">→</span>}</>)}</nav>
+{pages.map(p=><section data-page={p.id} data-cycle-page={p.cycle} id={p.id} aria-labelledby={`title-${p.id}`}>
+<p class="eyebrow">{p.group}{p.cycle?' · '+p.label:''}</p><h1 id={`title-${p.id}`}>{p.title}</h1><p class="lead">{p.lead}</p>
+<div class="page-body" set:html={p.body}/>
+{p.tip&&<div class="tip"><span aria-hidden="true">💡</span><p><strong>Tip</strong> · {p.tip}</p></div>}
+{p.prompt&&<details class="prompt-details"><summary>Prompt bekijken en kopiëren</summary><p class="small">Vul de stukken tussen [haakjes] aan. Blijf voor de vijf stappen in hetzelfde AI-gesprek.</p><Prompt>{p.prompt.split('\n\n').map(text=><p>{text}</p>)}</Prompt></details>}
+{p.done&&<div class="notice"><strong>Klaar voor de volgende stap?</strong> {p.done}</div>}
 </section>)}
-<footer class="pagination"><a data-prev href="#start">← Vorige</a><span data-position></span><a data-next href="#definitie">Volgende →</a></footer>
+<footer class="pagination"><a data-prev href="#start">← Vorige</a><span data-position aria-live="polite"></span><a data-next href="#definitie">Volgende →</a></footer>
 </main></div>
 <script>
 const pages=Array.from(document.querySelectorAll<HTMLElement>('[data-page]'));
 const ids=pages.map(p=>p.id);
+const cycleIds=['behoefte','oplossing','bouwen','testen','itereren'];
 function render(){
  const hash=location.hash.slice(1); const id=ids.includes(hash)?hash:'start'; const i=ids.indexOf(id);
  pages.forEach(p=>{p.hidden=p.id!==id});
  document.querySelectorAll<HTMLAnchorElement>('[data-nav]').forEach(a=>{if(a.dataset.nav===id)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
- document.querySelectorAll<HTMLAnchorElement>('[data-cycle]').forEach(a=>{if(a.dataset.cycle===id)a.setAttribute('aria-current','step');else a.removeAttribute('aria-current')});
- const cycle=document.querySelector<HTMLElement>('.cycle');if(cycle)cycle.hidden=!['behoefte','oplossing','bouwen','testen','itereren'].includes(id);
+ document.querySelectorAll<HTMLAnchorElement>('[data-cycle]').forEach(a=>{if(a.dataset.cycle===(pages.find(p=>p.id===id)?.dataset.cyclePage||id))a.setAttribute('aria-current','step');else a.removeAttribute('aria-current')});
+ const cycle=document.querySelector<HTMLElement>('.cycle');if(cycle)cycle.hidden=!cycleIds.includes(pages.find(p=>p.id===id)?.dataset.cyclePage||id);
  const prev=document.querySelector<HTMLAnchorElement>('[data-prev]');const next=document.querySelector<HTMLAnchorElement>('[data-next]');
  if(prev){prev.hidden=i===0;prev.href='#'+ids[Math.max(0,i-1)]}if(next){next.hidden=i===ids.length-1;next.href='#'+ids[Math.min(ids.length-1,i+1)]}
  const pos=document.querySelector('[data-position]');if(pos)pos.textContent=`${i+1} / ${ids.length}`;
