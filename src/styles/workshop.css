@@ -32,7 +32,6 @@ aside{padding-bottom:calc(var(--workshop-nav-height) + var(--space-5))}
 /* Return from the centre of step 5 to the centre of step 4. */
 .process-loop{bottom:calc((var(--text-body-line) + 2 * var(--space-2) + 2px) / 2 - 8px);width:82px;height:80px}.process-loop svg{display:block;width:82px;height:80px}
 
-.conversation-illustration{position:absolute;right:var(--space-2);top:0;width:min(55%,420px);height:auto;color:var(--forest);opacity:.07;z-index:-1;pointer-events:none}#aan-de-slag .panel{background:color-mix(in srgb,var(--surface) 92%,transparent)}@media(max-width:600px){.conversation-illustration{width:85%}}
 
 .solution-part h2{font-size:var(--text-h3-size);line-height:var(--text-h3-line);margin-bottom:var(--space-2)}.solution-part p{margin-bottom:var(--space-3)}.solution-choice{margin-top:var(--space-6);padding-top:var(--space-5);border-top:1px solid var(--line)}
 
@@ -52,3 +51,39 @@ aside{padding-bottom:calc(var(--workshop-nav-height) + var(--space-5))}
 #inspiratie .page-body h2{font-size:var(--text-h3-size);line-height:var(--text-h3-line);margin-bottom:var(--space-3)}
 
 .recap-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:var(--space-6);align-items:center;margin:var(--space-5) 0}.recap-list{margin:0;padding-left:var(--space-6);color:var(--forest);font-size:var(--text-h3-size);line-height:var(--text-h3-line);font-weight:700}.recap-list li{padding-left:var(--space-3)}.recap-list li+li{margin-top:var(--space-4)}.recap-list li::marker{color:var(--brand-text)}.recap-illustration{width:100%;height:auto;color:var(--forest);opacity:.3}@media(max-width:850px){.recap-layout{grid-template-columns:minmax(0,1fr) 180px}}@media(max-width:600px){.recap-layout{grid-template-columns:1fr}.recap-illustration{width:160px;justify-self:center}}
+
+/* Quick guide before the first workshop step. */
+.start-guide-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+.start-guide-cards > .panel {
+  margin-bottom: 0;
+}
+.start-guide-action {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.start-guide-icon {
+  flex: 0 0 3rem;
+  width: 3rem;
+  height: auto;
+  color: var(--forest);
+}
+.start-guide-note {
+  background: var(--warning-soft);
+  color: var(--warning);
+  border-color: var(--warning);
+}
+.start-guide-note strong {
+  display: block;
+  margin-bottom: var(--space-2);
+}
+.start-guide-reminder p {
+  margin: 0;
+}
+@media (max-width: 700px) {
+  .start-guide-cards { grid-template-columns: 1fr; }
+}
